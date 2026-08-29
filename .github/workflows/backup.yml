@@ -1,0 +1,70 @@
+name: Backup World
+
+on:
+  schedule:
+    # 04:00 UTC daily.
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+    inputs:
+      download:
+        description: Also pull the archive back and keep it as a GitHub artifact
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: minecraft-vm
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    environment: minecraft
+    timeout-minutes: 60
+    env:
+      TARGET: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: ssh
+        uses: ./.github/actions/ssh-setup
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          user: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ vars.SSH_PORT || '22' }}
+          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+
+      - name: Back up world
+        id: backup
+        run: |
+          set -euo pipefail
+          out="$(${{ steps.ssh.outputs.ssh }} "$TARGET" \
+            "sudo ${{ steps.ssh.outputs.remote_dir }}/scripts/backup.sh")"
+          echo "$out"
+          archive="$(printf '%s\n' "$out" | sed -n 's/^ARCHIVE=//p' | tail -1)"
+          [ -n "$archive" ] || { echo "backup.sh did not report an archive path" >&2; exit 1; }
+          echo "archive=$archive" >> "$GITHUB_OUTPUT"
+
+      - name: Download archive
+        if: ${{ inputs.download }}
+        run: |
+          set -euo pipefail
+          mkdir -p upload
+          # The archive is owned by the service user, so stage a readable copy.
+          ${{ steps.ssh.outputs.ssh }} "$TARGET" \
+            "sudo cp '${{ steps.backup.outputs.archive }}' /tmp/ && sudo chown \$(id -u):\$(id -g) /tmp/$(basename '${{ steps.backup.outputs.archive }}')"
+          scp -i ~/.ssh/deploy_key -P "${{ vars.SSH_PORT || '22' }}" -o BatchMode=yes \
+            "$TARGET:/tmp/$(basename '${{ steps.backup.outputs.archive }}')" upload/
+          ${{ steps.ssh.outputs.ssh }} "$TARGET" \
+            "rm -f /tmp/$(basename '${{ steps.backup.outputs.archive }}')"
+
+      - name: Upload artifact
+        if: ${{ inputs.download }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: minecraft-world-${{ github.run_id }}
+          path: upload/*.tar.gz
+          retention-days: 14

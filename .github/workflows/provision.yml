@@ -1,0 +1,66 @@
+name: Provision Server
+
+# One-shot (but re-runnable) setup of the Minecraft server on the Azure VM.
+# Never touches an existing world.
+
+on:
+  workflow_dispatch:
+    inputs:
+      server_type:
+        description: Override config/server.env MC_TYPE
+        type: choice
+        options: ["", vanilla, paper]
+        default: ""
+      minecraft_version:
+        description: Override config/server.env MC_VERSION
+        type: string
+        default: ""
+      memory:
+        description: Override config/server.env MC_MEMORY (e.g. 4G)
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: minecraft-vm
+  cancel-in-progress: false
+
+jobs:
+  provision:
+    runs-on: ubuntu-latest
+    environment: minecraft
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: ssh
+        uses: ./.github/actions/ssh-setup
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          user: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ vars.SSH_PORT || '22' }}
+          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+
+      - name: Provision
+        env:
+          TARGET: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
+          DIR: ${{ steps.ssh.outputs.remote_dir }}
+          MC_TYPE: ${{ inputs.server_type }}
+          MC_VERSION: ${{ inputs.minecraft_version }}
+          MC_MEMORY: ${{ inputs.memory }}
+        run: |
+          ${{ steps.ssh.outputs.ssh }} "$TARGET" \
+            "sudo MC_TYPE='$MC_TYPE' MC_VERSION='$MC_VERSION' MC_MEMORY='$MC_MEMORY' \
+               $DIR/scripts/provision.sh"
+
+      - name: Report status
+        if: always()
+        env:
+          TARGET: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
+          DIR: ${{ steps.ssh.outputs.remote_dir }}
+        run: |
+          ${{ steps.ssh.outputs.ssh }} "$TARGET" "sudo $DIR/scripts/status.sh" \
+            | tee -a "$GITHUB_STEP_SUMMARY"

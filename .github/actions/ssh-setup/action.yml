@@ -1,0 +1,78 @@
+name: SSH setup
+description: Write the deploy key and known_hosts, then sync this repo to the Azure VM.
+
+inputs:
+  host:
+    description: Public IP or DNS name of the Azure VM
+    required: true
+  user:
+    description: SSH user on the VM
+    required: true
+  key:
+    description: Private SSH key for that user
+    required: true
+  port:
+    description: SSH port
+    required: false
+    default: "22"
+  known_hosts:
+    description: >-
+      Contents of a known_hosts entry for the VM. Leave empty to trust the key
+      presented on first connection (trust-on-first-use).
+    required: false
+    default: ""
+  remote_dir:
+    description: Directory on the VM the repo is synced to
+    required: false
+    default: minecraft-deploy
+
+outputs:
+  ssh:
+    description: Ready-to-use ssh command prefix
+    value: ${{ steps.config.outputs.ssh }}
+  remote_dir:
+    description: Directory the repo was synced to
+    value: ${{ inputs.remote_dir }}
+
+runs:
+  using: composite
+  steps:
+    - name: Configure SSH
+      id: config
+      shell: bash
+      env:
+        SSH_KEY: ${{ inputs.key }}
+        KNOWN_HOSTS: ${{ inputs.known_hosts }}
+        HOST: ${{ inputs.host }}
+        PORT: ${{ inputs.port }}
+      run: |
+        set -euo pipefail
+        [ -n "$HOST" ] || { echo "SSH_HOST is not set" >&2; exit 1; }
+        [ -n "$SSH_KEY" ] || { echo "SSH_PRIVATE_KEY is not set" >&2; exit 1; }
+
+        mkdir -p ~/.ssh
+        chmod 700 ~/.ssh
+        printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+        chmod 600 ~/.ssh/deploy_key
+
+        if [ -n "$KNOWN_HOSTS" ]; then
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+        else
+          echo "::warning::SSH_KNOWN_HOSTS is not set; trusting the host key on first use."
+          ssh-keyscan -p "$PORT" -H "$HOST" >> ~/.ssh/known_hosts 2>/dev/null
+        fi
+        chmod 600 ~/.ssh/known_hosts
+
+        echo "ssh=ssh -i $HOME/.ssh/deploy_key -p $PORT -o BatchMode=yes" >> "$GITHUB_OUTPUT"
+
+    - name: Sync repository to the VM
+      shell: bash
+      env:
+        TARGET: ${{ inputs.user }}@${{ inputs.host }}
+        PORT: ${{ inputs.port }}
+        REMOTE_DIR: ${{ inputs.remote_dir }}
+      run: |
+        set -euo pipefail
+        rsync -az --delete --exclude '.git' \
+          -e "ssh -i $HOME/.ssh/deploy_key -p $PORT -o BatchMode=yes" \
+          ./ "$TARGET:$REMOTE_DIR/"

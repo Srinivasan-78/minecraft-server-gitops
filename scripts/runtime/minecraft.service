@@ -1,0 +1,28 @@
+[Unit]
+Description=Minecraft Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=__MC_USER__
+Group=__MC_USER__
+WorkingDirectory=__MC_ROOT__
+EnvironmentFile=__MC_ROOT__/server.env
+Environment=MC_ROOT=__MC_ROOT__
+ExecStart=__MC_ROOT__/bin/run.sh
+Restart=on-failure
+RestartSec=15s
+# Generous, so a big world always finishes saving before SIGKILL.
+TimeoutStopSec=180
+KillSignal=SIGTERM
+SuccessExitStatus=0 143
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=__MC_ROOT__
+
+[Install]
+WantedBy=multi-user.target
