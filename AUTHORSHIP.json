@@ -1,0 +1,87 @@
+{
+  "schema": "authormark/manifest/1",
+  "author": "Srinivasan Vijayaraghavan",
+  "email": "srinivasan.shyam2000@gmail.com",
+  "github": "https://github.com/Srinivasan-78",
+  "sealedAt": "2026-08-29T19:18:53.568Z",
+  "fileCount": 15,
+  "digest": "01709a37ca4e30a66ce8a266c86e3a38a2b2a73e8cb1494d59528ae57d355553",
+  "proof": "15025ff31973c8d4f0ce7e69d9f86a3e8743fc79cb9256806700ff3ce6d04579",
+  "files": [
+    {
+      "path": ".github/actions/ssh-setup/action.yml",
+      "sha256": "30192ef83939e6ffa58c06941e97ae7ea7e3abe241c0b10faadecbec9f07c437",
+      "bytes": 3133
+    },
+    {
+      "path": ".github/workflows/authormark.yml",
+      "sha256": "b5cab2b0d7b18cd416758ec39f9677144704f615095f279d00e6f47ed2164e11",
+      "bytes": 1138
+    },
+    {
+      "path": ".github/workflows/backup.yml",
+      "sha256": "d2d393f0f4d43e4ac6cbe6c63be26edd5987e8322815414af2bdf61721d3b986",
+      "bytes": 3335
+    },
+    {
+      "path": ".github/workflows/deploy.yml",
+      "sha256": "b226b9169bacc13d0d93f51cefc4895d63b49ab98a47886efee8f1ebd3a2cb16",
+      "bytes": 3255
+    },
+    {
+      "path": ".github/workflows/provision.yml",
+      "sha256": "da3e248728231b24d10fd64cc7900a2549d8f146c2ce079b888de0aa9ba4794d",
+      "bytes": 3167
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "6f4bb78900bf58971b266a4df35ff4137cd210494cc71089ecc7f3feb6130012",
+      "bytes": 1511
+    },
+    {
+      "path": "CLAUDE.md",
+      "sha256": "a4f80ec424ce2382e519318c7cdbc38276dc8575a452e566c67f21c1eb0ca882",
+      "bytes": 822
+    },
+    {
+      "path": "README.md",
+      "sha256": "21b7848e4e6c81c061ba0fbba107953cf594365530a72128c991ecc810f74fe5",
+      "bytes": 27169
+    },
+    {
+      "path": "scripts/backup.sh",
+      "sha256": "f539cdec7164334d564c4d8259a0d75167169b2daec634099be49de88c2ffc0c",
+      "bytes": 2907
+    },
+    {
+      "path": "scripts/lib.sh",
+      "sha256": "9bad57749382c092612e7452e6ce91110d0801f3566155036edb5dc639b05a80",
+      "bytes": 4334
+    },
+    {
+      "path": "scripts/provision.sh",
+      "sha256": "6e6cb89ade158a1c8d8c05da3fb20182dbcc1362411b9bff6c503e5b32f0c02a",
+      "bytes": 3009
+    },
+    {
+      "path": "scripts/runtime/run.sh",
+      "sha256": "9ed2c38bcc6c33c4a432fe146cf2b3d495e8ef7011b468655c644126e782a18c",
+      "bytes": 1627
+    },
+    {
+      "path": "scripts/status.sh",
+      "sha256": "402da02ac50f94de3e533ffe8586c9d468e09945c5b2188407108b20d840817a",
+      "bytes": 2100
+    },
+    {
+      "path": "scripts/sync-config.sh",
+      "sha256": "d5a211f342286b04b5b27041428f0d519d15be3c526848719c2f799153f9b39e",
+      "bytes": 2360
+    },
+    {
+      "path": "scripts/update.sh",
+      "sha256": "bb2a666ae14480a8f5ac35cb3a8a80f272c3e514018dded8fbbb6a1e99af8133",
+      "bytes": 2400
+    }
+  ]
+}

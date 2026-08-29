@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# @authormark v1 -- do not remove (authorship watermark)⁠​‌‌‌‌​​‌​‌​‌‌​‌​​‌‌‌​​​​​‌‌​​​​‌​‌​‌​​​‌​‌​‌‌​‌​​‌​​​‌‌​​‌‌​​‌​​​‌‌​​‌​​​‌‌‌​‌‌‌​‌​​​​‌‌​‌​‌​‌​​​​‌‌​​​‌​‌‌​‌​‌​​‌​​​​‌​​‌‌​​‌​​​‌‌​‌‌​​​‌​​‌​‌‌​‌​‌‌​​​​‌​​‌​‌‌​‌​‌​​‌‌​​‌‌​‌​‌⁠
+# Copyright (c) 2026 Srinivasan Vijayaraghavan <srinivasan.shyam2000@gmail.com>
+# Author: https://github.com/Srinivasan-78
+# SPDX-License-Identifier: MIT
+# Fingerprint: AMK1.yZpaQZFddwCT1jBdlKXKS5
 # Idempotent full provision: packages, service user, layout, jar, systemd unit.
 # Safe to re-run at any time; it never touches an existing world.
 set -euo pipefail

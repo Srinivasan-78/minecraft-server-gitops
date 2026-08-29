@@ -1,3 +1,10 @@
+<!--
+  @authormark v1 -- do not remove (authorship watermark)⁠​‌​​​​‌‌​‌​‌​‌‌​​‌​‌‌​​​​​‌‌​‌​‌​‌​​‌‌​​​​‌‌​‌‌‌​‌​​​​‌‌​‌‌‌‌​​​​‌​‌‌​‌​​‌‌​‌‌​‌​‌​​‌‌‌‌​‌​​​​​‌​‌​‌‌‌‌‌​​‌‌​‌‌​​​‌‌​‌‌‌​​‌‌​‌‌​​‌‌​​​​‌​‌‌​‌‌‌‌​‌​‌​​‌‌​‌‌‌​​‌‌​‌​‌​‌‌​​‌​‌‌‌‌‌⁠
+  Copyright (c) 2026 Srinivasan Vijayaraghavan <srinivasan.shyam2000@gmail.com>
+  Author: https://github.com/Srinivasan-78
+  SPDX-License-Identifier: MIT
+  Fingerprint: AMK1.CVX5L7CxZmOA_676aoSsV_
+-->
 # Minecraft Server Setup
 
 🎮 A Minecraft server that runs 24/7 on a computer in a data centre, and that you control **by editing text files on GitHub**.

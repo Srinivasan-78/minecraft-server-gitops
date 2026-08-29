@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# @authormark v1 -- do not remove (authorship watermark)⁠​‌​‌​‌‌‌​‌‌​‌‌‌‌​​‌​‌‌​‌​​‌​‌‌​‌​‌‌‌​‌‌​​‌​‌​‌‌​​‌‌​‌​‌​​‌‌​​‌​‌​‌​‌‌​​‌​‌​‌‌​​‌​‌​‌​​​​​‌‌‌​‌​​​‌​​‌‌‌​​‌​‌​‌‌​​‌​​‌​​‌​‌​‌​​‌​​​‌‌​‌‌‌​​‌‌​​‌​​​‌‌​‌​​​‌​‌​‌​‌​​‌‌‌​​‌​‌​‌‌​​‌⁠
+# Copyright (c) 2026 Srinivasan Vijayaraghavan <srinivasan.shyam2000@gmail.com>
+# Author: https://github.com/Srinivasan-78
+# SPDX-License-Identifier: MIT
+# Fingerprint: AMK1.Wo--vVjeYYPtNVIR724U9Y
 # Push config/ from the repo to the server. The repo is the source of truth for
 # these files; anything edited in-game (ops, whitelist) is overwritten.
 set -euo pipefail
