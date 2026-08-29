@@ -45,11 +45,15 @@ jobs:
             "sudo ${{ steps.ssh.outputs.remote_dir }}/scripts/backup.sh")"
           echo "$out"
           archive="$(printf '%s\n' "$out" | sed -n 's/^ARCHIVE=//p' | tail -1)"
-          [ -n "$archive" ] || { echo "backup.sh did not report an archive path" >&2; exit 1; }
+          # No archive is legitimate on a server whose world has not been
+          # generated yet; backup.sh says so and exits 0.
+          if [ -z "$archive" ]; then
+            echo "::notice::No archive was produced — there is no world to back up yet."
+          fi
           echo "archive=$archive" >> "$GITHUB_OUTPUT"
 
       - name: Download archive
-        if: ${{ inputs.download }}
+        if: ${{ inputs.download && steps.backup.outputs.archive != '' }}
         run: |
           set -euo pipefail
           mkdir -p upload
@@ -62,7 +66,7 @@ jobs:
             "rm -f /tmp/$(basename '${{ steps.backup.outputs.archive }}')"
 
       - name: Upload artifact
-        if: ${{ inputs.download }}
+        if: ${{ inputs.download && steps.backup.outputs.archive != '' }}
         uses: actions/upload-artifact@v4
         with:
           name: minecraft-world-${{ github.run_id }}

@@ -52,6 +52,15 @@ jobs:
           MC_VERSION: ${{ inputs.minecraft_version }}
           MC_MEMORY: ${{ inputs.memory }}
         run: |
+          set -euo pipefail
+          # These end up inside a single-quoted remote command string, so reject
+          # anything that could close the quote or chain another command.
+          for pair in "server_type=$MC_TYPE" "minecraft_version=$MC_VERSION" "memory=$MC_MEMORY"; do
+            case "${pair#*=}" in
+              "") ;;
+              *[!A-Za-z0-9._-]*) echo "invalid ${pair%%=*}: ${pair#*=}" >&2; exit 1 ;;
+            esac
+          done
           ${{ steps.ssh.outputs.ssh }} "$TARGET" \
             "sudo MC_TYPE='$MC_TYPE' MC_VERSION='$MC_VERSION' MC_MEMORY='$MC_MEMORY' \
                $DIR/scripts/provision.sh"

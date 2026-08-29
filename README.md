@@ -287,18 +287,25 @@ Installing Java and restarting a service need admin powers. Rather than handing 
 
 ```bash
 sudo tee /etc/sudoers.d/minecraft-deploy >/dev/null <<'EOF'
-<user> ALL=(ALL) NOPASSWD: /home/<user>/minecraft-deploy/scripts/provision.sh, \
-                           /home/<user>/minecraft-deploy/scripts/update.sh, \
-                           /home/<user>/minecraft-deploy/scripts/sync-config.sh, \
-                           /home/<user>/minecraft-deploy/scripts/backup.sh, \
+<user> ALL=(ALL) NOPASSWD:SETENV: /home/<user>/minecraft-deploy/scripts/provision.sh, \
+                                  /home/<user>/minecraft-deploy/scripts/update.sh, \
+                                  /home/<user>/minecraft-deploy/scripts/sync-config.sh
+<user> ALL=(ALL) NOPASSWD: /home/<user>/minecraft-deploy/scripts/backup.sh, \
                            /home/<user>/minecraft-deploy/scripts/status.sh, \
                            /usr/bin/systemctl restart minecraft, \
-                           /usr/bin/cp, /usr/bin/chown
+                           /usr/bin/cp /opt/minecraft/backups/world-*.tar.gz /tmp/, \
+                           /usr/bin/chown * /tmp/world-*.tar.gz
 EOF
 sudo chmod 440 /etc/sudoers.d/minecraft-deploy
+sudo visudo -cf /etc/sudoers.d/minecraft-deploy   # check it before you log out
 ```
 
-Replace `<user>` with your actual SSH username. Then read [Safety and security](#safety-and-security), because this step has a catch worth understanding.
+Replace `<user>` with your actual SSH username. Two details that look fussy but aren't:
+
+- **`SETENV:`** on the first three. The workflows pass one-off overrides as environment variables (`sudo MC_RESTART=false … update.sh`), and `sudo` refuses to set variables it wasn't told to allow. Without that tag every deploy fails with *"sorry, you are not allowed to set the following environment variables"*.
+- **`cp` and `chown` carry their arguments.** Listed bare, they would let the deploy key copy any file anywhere as root — which is simply root. Pinning the arguments limits them to the one thing the backup download actually needs.
+
+Then read [Safety and security](#safety-and-security), because this step has a catch worth understanding.
 
 ### 4. Add the secrets to GitHub
 
@@ -480,6 +487,7 @@ The `minecraft.service` file locks the server into a small box:
 | Deploy fails with *"still contains the placeholder UUID"* | You didn't replace the fake UUIDs | Put real UUIDs in `ops.json` / `whitelist.json`, or use `[]` |
 | Robot can't connect at all | Wrong `SSH_HOST`, wrong key, or port 22 closed | Try `ssh -i ~/.ssh/mc_deploy <user>@<host>` yourself |
 | *"sudo: a password is required"* | The sudoers file from step 3 is missing or has the wrong username/path | Recheck `/etc/sudoers.d/minecraft-deploy` |
+| *"you are not allowed to set the following environment variables"* | The sudoers rule is missing the `SETENV:` tag | Re-apply step 3 — `provision.sh`, `update.sh` and `sync-config.sh` all need it |
 | Server starts, then dies seconds later | `MC_MEMORY` is bigger than the machine's actual RAM | Lower it; leave ~2 GB for the OS |
 | Friends can't join, but the workflow is green | Port 25565 open in only one of the two firewalls | Check the cloud firewall *and* `ufw` |
 | Wrong Java version errors | Newer Minecraft needs newer Java | Bump `MC_JAVA_VERSION` and re-run *Provision Server* |

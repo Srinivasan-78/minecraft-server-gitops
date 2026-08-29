@@ -10,6 +10,13 @@ source "$REPO_DIR/scripts/lib.sh"
 load_env "$REPO_DIR/config/server.env"
 
 : "${MC_ACCEPT_EULA:=true}"
+# Defaults so a trimmed-down server.env fails with a real message instead of
+# "unbound variable" from set -u.
+: "${MC_TYPE:=paper}"
+: "${MC_VERSION:=latest}"
+: "${MC_MEMORY:=4G}"
+: "${MC_JAVA_ARGS:=}"
+: "${MC_JAVA_VERSION:=21}"
 
 [ "$(id -u)" -eq 0 ] || die "provision.sh must run as root (use sudo)"
 [ "$MC_ACCEPT_EULA" = true ] || die "set MC_ACCEPT_EULA=true to accept the Minecraft EULA"

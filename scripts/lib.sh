@@ -17,10 +17,14 @@ need() {
 load_env() {
   local file="${1:?env file required}"
   [ -f "$file" ] || die "missing env file: $file"
-  local key value
-  while IFS= read -r line; do
+  local line key value
+  # `|| [ -n "$line" ]` so a final line without a trailing newline is not lost.
+  while IFS= read -r line || [ -n "$line" ]; do
+    line="${line%$'\r'}"
     case "$line" in ''|\#*) continue ;; esac
+    case "$line" in *=*) ;; *) continue ;; esac
     key="${line%%=*}"
+    case "$key" in ''|[0-9]*|*[!A-Za-z0-9_]*) continue ;; esac
     value="${line#*=}"
     # Strip one layer of surrounding quotes.
     value="${value%\"}"; value="${value#\"}"
@@ -81,7 +85,11 @@ service_active() {
 }
 
 # Send a console command to the running server through its stdin FIFO.
+# Opening a FIFO for writing blocks until something is reading it, so a server
+# that died without tearing down the FIFO would hang the caller forever. Cap it.
 mc_console() {
   [ -p "$MC_ROOT/console.in" ] || die "console FIFO missing; is the server installed?"
-  printf '%s\n' "$*" | sudo -u "$MC_USER" tee "$MC_ROOT/console.in" >/dev/null
+  printf '%s\n' "$*" \
+    | timeout -k 2 10 sudo -u "$MC_USER" tee "$MC_ROOT/console.in" >/dev/null \
+    || die "timed out sending console command: $*"
 }

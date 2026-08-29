@@ -12,7 +12,11 @@ load_env "$REPO_DIR/config/server.env"
 
 need curl; need jq
 
-read -r resolved url <<<"$(resolve_jar_url "$MC_TYPE" "$MC_VERSION")"
+# Assign first: `read ... <<<"$(...)"` reports read's status, so a failure inside
+# resolve_jar_url would be swallowed and we would carry on with empty values.
+jar_info="$(resolve_jar_url "$MC_TYPE" "$MC_VERSION")"
+read -r resolved url <<<"$jar_info"
+[ -n "$resolved" ] && [ -n "$url" ] || die "could not resolve $MC_TYPE $MC_VERSION"
 target="$MC_ROOT/jars/${MC_TYPE}-${resolved}.jar"
 
 if [ -s "$target" ]; then
