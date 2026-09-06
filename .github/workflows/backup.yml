@@ -1,8 +1,8 @@
-# @authormark v1 -- do not remove (authorship watermark)⁠​‌​​‌‌‌​​‌​‌​​‌‌​‌‌​​​​‌​‌‌​‌‌‌​​‌‌​‌‌​​​‌‌‌‌​​‌​‌‌​‌​​​​‌​‌‌‌‌‌​‌​​​​​‌​‌​‌​​​‌​​‌‌​​‌​​​‌‌​​​‌​‌​​‌​‌​​​‌‌‌​​​​‌​​‌​​​​‌​​​‌​‌​‌​​​‌​‌​‌​‌​‌​‌​‌​​​‌​​​‌​‌​​​‌​‌‌​​​‌​​‌​​‌​​​⁠
+# @authormark v1 -- do not remove (authorship watermark)⁠​‌​‌​‌​‌​‌‌​‌‌‌‌​‌​‌‌‌‌‌​‌‌​​‌​‌​​‌‌​‌‌​​​‌‌‌​​​​‌​‌‌​​‌​​‌‌​​​‌​‌‌‌​​‌​​‌​‌‌​​​​‌‌‌​‌‌​​‌​​​‌​‌​‌‌​​‌‌‌​‌‌​‌​​​​‌‌​‌​​‌​‌‌​​‌​‌​‌‌​‌​‌​​‌‌​‌‌​‌​‌​​‌‌‌​​‌‌​​‌​​​‌‌‌​​​​​‌​​​‌​​⁠
 # Copyright (c) 2026 Srinivasan Vijayaraghavan <srinivasan.shyam2000@gmail.com>
 # Author: https://github.com/Srinivasan-78
 # SPDX-License-Identifier: MIT
-# Fingerprint: AMK1.NSanlyh_AQ21J8HEEUDQbH
+# Fingerprint: AMK1.Uo_e68Y1rXvEghiejmNdpD
 name: Backup World
 
 on:
@@ -27,7 +27,7 @@ jobs:
   backup:
     runs-on: ubuntu-latest
     environment: minecraft
-    timeout-minutes: 60
+    timeout-minutes: 15
     env:
       TARGET: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
     steps:

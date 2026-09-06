@@ -1,8 +1,8 @@
-# @authormark v1 -- do not remove (authorship watermark)⁠​‌‌​​​‌​​‌​​‌‌‌​​​‌‌​‌‌‌​‌‌​‌​​‌​‌​‌​​‌‌​‌​​‌‌​​​‌​‌‌‌‌‌​​‌‌​​​​​‌‌​‌​‌​​‌‌​‌‌‌​​‌‌​​​‌‌​‌‌‌‌​‌​​‌​​‌​​​​‌​​‌‌​​​‌‌​‌​​​​‌​‌​​‌‌​‌​​​​​‌​‌‌​‌​‌‌​‌‌‌​​​​​‌‌‌​​‌‌​‌‌‌‌​‌​​‌​‌​‌‌​⁠
+# @authormark v1 -- do not remove (authorship watermark)⁠​​‌‌​​​​​‌‌​‌​​​​‌‌​‌‌​‌​‌​‌‌‌‌‌​‌‌​‌​​​​‌​‌​​​​​‌‌‌​‌​‌​‌​‌​​​‌​​‌‌‌​​​​‌​‌​​‌‌​‌​‌‌​​‌​‌‌‌​​​‌​‌‌‌‌​​​​‌‌​​‌‌​​‌​‌‌‌‌‌​​‌‌​​​​​‌​​‌‌​​​‌‌‌​​​‌​‌‌​​​‌‌​‌​​‌​​​​‌​‌​​‌​​‌​​‌​‌​⁠
 # Copyright (c) 2026 Srinivasan Vijayaraghavan <srinivasan.shyam2000@gmail.com>
 # Author: https://github.com/Srinivasan-78
 # SPDX-License-Identifier: MIT
-# Fingerprint: AMK1.bN7iSL_0jnczHLhSAkpszV
+# Fingerprint: AMK1.0hm_hPuQ8SYqxf_0LqcHRJ
 name: SSH setup
 description: Write the deploy key and known_hosts, then sync this repo to the Azure VM.
 
@@ -64,11 +64,11 @@ runs:
           printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
         else
           echo "::warning::SSH_KNOWN_HOSTS is not set; trusting the host key on first use."
-          ssh-keyscan -p "$PORT" -H "$HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          ssh-keyscan -T 10 -p "$PORT" -H "$HOST" >> ~/.ssh/known_hosts 2>/dev/null
         fi
         chmod 600 ~/.ssh/known_hosts
 
-        echo "ssh=ssh -i $HOME/.ssh/deploy_key -p $PORT -o BatchMode=yes" >> "$GITHUB_OUTPUT"
+        echo "ssh=ssh -i $HOME/.ssh/deploy_key -p $PORT -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=3" >> "$GITHUB_OUTPUT"
 
     - name: Sync repository to the VM
       shell: bash
@@ -79,5 +79,5 @@ runs:
       run: |
         set -euo pipefail
         rsync -az --delete --exclude '.git' \
-          -e "ssh -i $HOME/.ssh/deploy_key -p $PORT -o BatchMode=yes" \
+          -e "ssh -i $HOME/.ssh/deploy_key -p $PORT -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=3" \
           ./ "$TARGET:$REMOTE_DIR/"
