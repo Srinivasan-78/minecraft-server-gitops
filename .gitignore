@@ -14,3 +14,7 @@ backups/
 *.tar.gz
 .env
 .env.local
+
+# Master Bot hygiene additions
+__pycache__/
+*.py[cod]
