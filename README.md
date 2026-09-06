@@ -198,7 +198,7 @@ flowchart TD
 |---|---|---|
 | **Provision Server** (`provision.yml`) | You click a button in the Actions tab | The very first setup. Safe to re-run any time — it never deletes a world. |
 | **Deploy Config & Version** (`deploy.yml`) | Automatically on every push that touches `config/` or `scripts/`, or by button | The everyday one. 95% of your life is this robot. |
-| **Backup World** (`backup.yml`) | Every day at 04:00 UTC, or by button | Insurance. |
+| **Backup World** (`backup.yml`) | Every Sunday at 04:00 UTC, or by button (with optional artifact download) | Insurance. |
 
 All three share a **concurrency group** called `minecraft-vm`, which is a fancy way of saying: *only one robot may touch the server at a time, and the others politely queue.* Two robots restarting the server at once would be a mess.
 
