@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       download:
-        description: Also pull the archive back and keep it as a GitHub artifact (DR best practice: off-host archive retrieval)
+        description: "Also pull the archive back and keep it as a GitHub artifact (DR best practice: off-host archive retrieval)"
         type: boolean
         default: false
 

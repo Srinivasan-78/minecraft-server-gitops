@@ -5,5 +5,11 @@
   "year": 2026,
   "license": "MIT",
   "keyFile": "~/.authormark.key",
-  "ignore": [".github", "*.svg", "backups", "server.properties"]
+  "ignore": [
+    ".github",
+    "*.svg",
+    "backups",
+    "server.properties",
+    "REUSE.toml"
+  ]
 }
